@@ -1,0 +1,136 @@
+{
+  "data_dir": "data",
+  "ollama": {
+    "host": "http://127.0.0.1:11434",
+    "chat_model": "llama3.2:1b",
+    "analysis_model": "",
+    "embed_model": "nomic-embed-text",
+    "request_timeout": 180,
+    "web_api_base": "https://ollama.com/api",
+    "api_key_env": "OLLAMA_API_KEY"
+  },
+  "internet": {
+    "enabled": true,
+    "providers": [
+      "ollama",
+      "searxng",
+      "wikipedia",
+      "arxiv",
+      "duckduckgo"
+    ],
+    "searxng_url": "",
+    "duckduckgo_enabled": false,
+    "user_agent": "NIMRAS-Learner/2.0 (+local research agent)",
+    "respect_robots_txt": true,
+    "request_timeout": 20,
+    "max_bytes_per_page": 2000000,
+    "min_seconds_between_requests_per_domain": 2.0,
+    "allowed_domains": [],
+    "denied_domains": [
+      "facebook.com",
+      "instagram.com",
+      "tiktok.com",
+      "x.com",
+      "twitter.com",
+      "pinterest.com",
+      "linkedin.com"
+    ],
+    "crawl_max_depth": 1,
+    "crawl_max_pages_per_domain": 4,
+    "use_ollama_web_fetch": true
+  },
+  "rss_feeds": [
+    "https://rss.arxiv.org/rss/cs.AI",
+    "https://rss.arxiv.org/rss/cs.CR",
+    "https://peps.python.org/peps.rss",
+    "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+    "https://github.blog/feed/",
+    "https://ollama.com/blog/rss.xml"
+  ],
+  "seed_topics": {
+    "technical": [
+      "Python programming language",
+      "Rust programming language",
+      "Linux kernel",
+      "TCP/IP networking",
+      "Zero trust security architecture",
+      "Transformer neural networks",
+      "Retrieval-augmented generation",
+      "Ollama local LLM runtime",
+      "Docker containers",
+      "WebAssembly"
+    ],
+    "general": [
+      "Semiconductor manufacturing",
+      "Renewable energy storage",
+      "Project management methodologies",
+      "Scientific method"
+    ]
+  },
+  "scheduler": {
+    "enabled": true,
+    "interval_minutes": 60,
+    "initial_delay_seconds": 30,
+    "max_topics_per_session": 3,
+    "max_fetches_per_session": 24,
+    "max_llm_calls_per_session": 80,
+    "max_session_minutes": 25,
+    "defer_while_user_active_seconds": 120,
+    "quiet_hours": [],
+    "revisit_after_days": 30,
+    "discovery_every_n_sessions": 2,
+    "evaluation_every_n_sessions": 3,
+    "backup_every_hours": 24
+  },
+  "learning": {
+    "chunk_chars": 1200,
+    "chunk_overlap": 150,
+    "max_chars_analyzed_per_source": 9000,
+    "near_duplicate_similarity": 0.95,
+    "same_entry_similarity": 0.8,
+    "verify_min_independent_domains": 2,
+    "verify_min_credibility": 0.6,
+    "authoritative_credibility": 0.9,
+    "max_new_topics_per_source": 3,
+    "max_queued_topics": 400
+  },
+  "retrieval": {
+    "top_k": 6,
+    "min_score": 0.3,
+    "include_provisional": true
+  },
+  "self_improvement": {
+    "enabled": true,
+    "responses_per_run": 20,
+    "retrieval_probes_per_run": 15,
+    "low_score_threshold": 0.55,
+    "prompt_experiment_traffic": 0.25,
+    "prompt_experiment_min_samples": 12,
+    "prompt_promotion_margin": 0.05,
+    "merge_duplicate_similarity": 0.93
+  },
+  "sandbox": {
+    "mode": "docker",
+    "image": "python:3.12-slim",
+    "timeout_seconds": 30,
+    "memory": "256m",
+    "cpus": "0.5"
+  },
+  "training": {
+    "enabled": false,
+    "min_example_score": 0.8,
+    "holdout_fraction": 0.15,
+    "auto_promote": false,
+    "promotion_margin": 0.03
+  },
+  "privacy": {
+    "blocked_query_terms": []
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8765
+  },
+  "backups": {
+    "keep": 10
+  }
+}

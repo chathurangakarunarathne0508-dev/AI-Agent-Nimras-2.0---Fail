@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N.I.M.R.A.S. Learning Centre</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/voice.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="pulse" id="pulse"></span>
+    <div>
+      <h1>N.I.M.R.A.S. <span>LEARNING CENTRE</span></h1>
+      <div class="sub" id="stateLine">connecting…</div>
+    </div>
+  </div>
+  <div class="actions">
+    <button id="btnRun" class="primary">Learn now</button>
+    <button id="btnStop">Stop session</button>
+    <button id="btnPause">Pause</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="voice" class="on">● Voice</button>
+  <button data-tab="overview">Overview</button>
+  <button data-tab="library">Knowledge library</button>
+  <button data-tab="topics">Research topics</button>
+  <button data-tab="sessions">Sessions</button>
+  <button data-tab="performance">Performance</button>
+  <button data-tab="chat">Text chat</button>
+  <button data-tab="voicelab">Voice lab</button>
+  <button data-tab="memory">Memory</button>
+  <button data-tab="audit">Audit trail</button>
+  <button data-tab="settings">Settings</button>
+</nav>
+
+<main>
+  <!-- ============================== VOICE (primary experience) -->
+  <section id="tab-voice" class="tab on">
+    <div class="vwrap">
+      <div class="vtopbar">
+        <span id="vConn" class="pill warn">connecting…</span>
+        <span id="vEngine"></span>
+      </div>
+      <div class="vstage" id="vStage" data-state="offline">
+        <div class="vside">
+          <div class="vlabel">Your voice <span class="muted" id="vMicLabel">Microphone OFF</span></div>
+          <canvas id="vMicWave" class="vwave" aria-label="Microphone waveform"></canvas>
+          <div class="vmeter"><i id="vLevelMic"></i></div>
+          <div class="vlabel" style="margin-top:14px">N.I.M.R.A.S. voice</div>
+          <canvas id="vAiWave" class="vwave ai" aria-label="AI voice waveform"></canvas>
+          <div class="vmeter ai"><i id="vLevelAi"></i></div>
+          <div class="vlangs">
+            <div><span class="muted">Heard</span> <b id="vHeardLang">–</b> <span class="muted small" id="vLangProb"></span></div>
+            <div><span class="muted">Replying</span> <b id="vReplyLang">–</b></div>
+          </div>
+        </div>
+        <div class="vcenter">
+          <canvas id="vOrb" class="vorb" aria-hidden="true"></canvas>
+          <div class="vstate" aria-live="polite"><div id="vStateLabel">OFFLINE</div><div id="vStateDetail" class="muted"></div></div>
+          <div class="vcontrols">
+            <button id="vMic" class="vmic" aria-pressed="false" title="Start / stop the microphone">🎤</button>
+            <button id="vInterrupt" class="vstop" disabled title="Stop speaking">■ Stop</button>
+          </div>
+          <div id="vMicLive" class="vlive" hidden>● MIC LIVE - audio is processed on this computer only</div>
+          <div id="vError" class="banner bad" hidden></div>
+          <div class="muted small">Tap 🎤 to start a hands-free session · hold <kbd>Space</kbd> to push-to-talk · just speak to interrupt</div>
+        </div>
+        <div class="vside">
+          <div class="vcaption"><div class="muted small">You said</div><div id="vYou" class="vyou">–</div><div id="vFix" class="small muted"></div></div>
+          <div class="vcaption"><div class="muted small">N.I.M.R.A.S.</div><div id="vReply" class="vreply"></div></div>
+          <div id="vHistory" class="vhist"></div>
+          <div class="small" id="vMetrics"></div>
+          <div class="small muted">Perceived first audio: <b id="vPerceived">–</b> · local stop: <b id="vInterruptMs">–</b></div>
+          <div class="small" id="vNote"></div>
+          <div class="vrow">
+            <button class="small" id="vTypeToggle" type="button">⌨ Type instead</button>
+            <button class="small" id="vSaveBtn" type="button" disabled>Save last utterance to test set…</button>
+          </div>
+          <form id="vTypeForm" hidden class="vrow"><input id="vTypeInput" placeholder="Type when you can't speak…" autocomplete="off"><button class="primary">Send</button></form>
+          <div id="vSaveBox" class="vsave" hidden>
+            <div class="small muted">Keeps this one recording locally (data/voice_tests) for accuracy testing only - never uploaded, never used for training.</div>
+            <textarea id="vSaveText" rows="2" placeholder="Exact words spoken (correct the transcript)"></textarea>
+            <div class="vrow">
+              <select id="vSaveLang"><option value="en">English</option><option value="si">Sinhala</option><option value="mixed">Mixed</option></select>
+              <select id="vSaveCat"><option value="sri_lankan_english">Sri Lankan English</option><option value="sinhala_accent">Sinhala accent</option>
+                <option value="mixed_speech">Mixed speech</option><option value="background_noise">Background noise</option>
+                <option value="short_command">Short command</option><option value="long_instruction">Long instruction</option></select>
+            </div>
+            <label class="small"><input type="checkbox" id="vSaveConsent"> I consent to storing this recording of my voice locally for testing.</label>
+            <button class="small primary" id="vSaveGo" type="button">Save</button> <span id="vSaveNote" class="small muted"></span>
+          </div>
+        </div>
+      </div>
+      <details class="vsettings">
+        <summary>Voice settings</summary>
+        <div class="vgrid">
+          <label>Reply language <select id="vLangPref"><option value="auto">Auto (follow my language)</option><option value="en">English</option><option value="si">සිංහල Sinhala</option></select></label>
+          <label>English voice <select id="vVoice_en"></select></label>
+          <label>Sinhala voice <select id="vVoice_si"></select></label>
+          <label>Speech rate <input type="range" id="vSpeed" min="0.7" max="1.4" step="0.05" value="1"> <span id="vSpeedVal"></span></label>
+          <label>Volume <input type="range" id="vVolume" min="0" max="1.5" step="0.05" value="1"> <span id="vVolumeVal"></span></label>
+          <label>End-of-speech silence <input type="range" id="vEndpoint" min="400" max="1600" step="50" value="750"> <span id="vEndpointVal"></span></label>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================== VOICE LAB -->
+  <section id="tab-voicelab" class="tab">
+    <div class="grid">
+      <div class="card"><h2>Hardware &amp; model selection</h2><div id="labHardware" class="muted">loading…</div></div>
+      <div class="card"><h2>Voice engine</h2><div id="labEngine"></div></div>
+      <div class="card wide"><h2>Self-test <span class="muted" id="labTestState"></span></h2>
+        <p class="muted small">Synthetic round trips (Piper → Whisper) give an upper bound - real voices are harder. Sri Lankan English and Sinhala accent accuracy can only be measured with consented recordings saved from the Voice tab.</p>
+        <button id="labRunTests" class="primary">Run voice self-test</button>
+        <div id="labTestSummary"></div><div id="labTests"></div>
+        <details><summary class="small">Log</summary><pre id="labTestLog" class="small"></pre></details>
+      </div>
+      <div class="card wide"><h2>Live performance (your conversations)</h2><div id="labPerf"></div></div>
+      <div class="card wide"><h2>Speech models · benchmark gate · rollback</h2>
+        <p class="muted small">N.I.M.R.A.S. watches release feeds and research topics and recommends models. It never downloads or runs them; install a candidate yourself, benchmark it here, then promote it. The previous model is kept for rollback.</p>
+        <button id="labCheckUpdates">Check for speech-model updates</button> <span id="labUpdNote" class="small muted"></span>
+        <div id="labModels"></div>
+      </div>
+      <div class="card"><h2>Privacy</h2>
+        <p class="small muted">Audio is processed locally and never stored, except recordings you explicitly save to the test set. Transcripts are kept in conversation history so follow-ups work.</p>
+        <button id="labDeleteHistory">Delete voice transcripts</button> <button id="labDeleteAll">Delete all conversation history</button>
+        <button id="labDeleteSet">Delete voice test recordings</button>
+        <div id="labPrivNote" class="small muted"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== OVERVIEW -->
+  <section id="tab-overview" class="tab">
+    <div class="banner" id="healthBanner" hidden></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid">
+      <div class="card"><h2>Current learning status</h2><div id="statusBox"></div></div>
+      <div class="card"><h2>Active research topics</h2><div id="activeTopics"></div></div>
+      <div class="card"><h2>Recently discovered technologies</h2><div id="discoveries"></div></div>
+      <div class="card"><h2>Knowledge categories</h2><div id="categories"></div></div>
+      <div class="card"><h2>Source reliability</h2><div id="reliability"></div></div>
+      <div class="card"><h2>Knowledge gaps</h2><div id="gaps"></div></div>
+      <div class="card wide"><h2>Failed research attempts</h2><div id="failures"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== LIBRARY -->
+  <section id="tab-library" class="tab">
+    <div class="toolbar">
+      <input id="libQ" type="search" placeholder="Search the knowledge library (semantic + keyword)…">
+      <select id="libLayer"><option value="">All layers</option><option>technical</option><option>general</option></select>
+      <select id="libStatus"><option value="">Any status</option><option>verified</option><option>provisional</option><option>contested</option><option>outdated</option></select>
+      <button id="libGo" class="primary">Search</button>
+    </div>
+    <div class="split">
+      <div id="libList" class="list"></div>
+      <div id="libDetail" class="detail card"><p class="muted">Select an entry to see its claims, sources, versions and contradictions.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================== TOPICS -->
+  <section id="tab-topics" class="tab">
+    <div class="toolbar">
+      <input id="newTopic" placeholder="Add a research topic, e.g. 'Polars dataframe library'">
+      <label class="chk"><input type="checkbox" id="newTopicDeep"> deep study</label>
+      <button id="addTopic" class="primary">Queue topic</button>
+      <select id="topicFilter"><option value="">All</option><option>queued</option><option>active</option><option>learned</option><option>failed</option><option>parked</option></select>
+    </div>
+    <div id="topicTable"></div>
+  </section>
+
+  <!-- ============================== SESSIONS -->
+  <section id="tab-sessions" class="tab">
+    <div id="sessionTable"></div>
+  </section>
+
+  <!-- ============================== PERFORMANCE -->
+  <section id="tab-performance" class="tab">
+    <div class="toolbar"><button id="runEval" class="primary">Run self-evaluation now</button><span class="muted" id="evalNote"></span></div>
+    <div class="grid">
+      <div class="card wide"><h2>Learning performance over evaluation runs</h2><div id="evalChart"></div><div id="evalTable"></div></div>
+      <div class="card"><h2>Search strategy effectiveness</h2><div id="strategies"></div></div>
+      <div class="card"><h2>Repeated mistakes</h2><div id="mistakes"></div></div>
+      <div class="card wide"><h2>Prompt versions &amp; experiments</h2><div id="prompts"></div></div>
+      <div class="card wide"><h2>Model versions (experimental training)</h2><div id="models"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== CHAT -->
+  <section id="tab-chat" class="tab">
+    <div class="chat">
+      <div id="chatLog" class="chatlog"><p class="muted">Answers are grounded in learned knowledge, and each item is labelled verified, provisional or contested. Questions I can't answer become research topics.</p></div>
+      <form id="chatForm" class="chatform">
+        <input id="chatInput" autocomplete="off" placeholder="Ask N.I.M.R.A.S.…  (start with 'remember that…' to propose a personal memory)">
+        <button class="primary">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================== MEMORY -->
+  <section id="tab-memory" class="tab">
+    <div class="card">
+      <h2>Personal memory</h2>
+      <p class="muted">Only <b>approved</b> items are used in conversations. Personal memory is never sent to the internet; its values are also stripped from outgoing search queries.</p>
+      <div class="toolbar">
+        <input id="memKey" placeholder="key (e.g. preferred_language)">
+        <input id="memVal" placeholder="value">
+        <button id="memAdd" class="primary">Add (pending)</button>
+      </div>
+      <div id="memTable"></div>
+    </div>
+  </section>
+
+  <!-- ============================== AUDIT -->
+  <section id="tab-audit" class="tab">
+    <div class="toolbar"><input id="auditFilter" placeholder="filter by actor / action…"><button id="doBackup">Back up now</button><span class="muted" id="backupNote"></span></div>
+    <div id="auditTable"></div>
+  </section>
+
+  <!-- ============================== SETTINGS -->
+  <section id="tab-settings" class="tab">
+    <div class="card">
+      <h2>Learning settings</h2>
+      <p class="muted">Security-sensitive settings (domain allow/deny lists, sandbox, training promotion) can only be changed in <code>nimras.config.json</code>.</p>
+      <div id="settingsForm" class="settings"></div>
+      <button id="saveSettings" class="primary">Save</button> <span id="settingsNote" class="muted"></span>
+    </div>
+  </section>
+</main>
+<script src="/app.js"></script>
+<script src="/voice.js"></script>
+</body>
+</html>
